@@ -1,0 +1,26 @@
+<div class="head">
+  <div>
+    <h1><?= e($category['name']) ?></h1>
+    <p class="muted"><?= e($category['description'] ?? '') ?></p>
+  </div>
+
+  <?php if (Auth::check()): ?>
+    <a class="btn primary" href="/c/<?= e($category['slug']) ?>/new">New Thread</a>
+  <?php else: ?>
+    <a class="btn ghost" href="/login">Login to post</a>
+  <?php endif; ?>
+</div>
+
+<div class="panel">
+  <div class="list">
+    <?php foreach ($threads as $t): ?>
+      <a class="item" href="/t/<?= (int)$t['id'] ?>">
+        <div class="title"><?= e($t['title']) ?></div>
+        <div class="muted">by <?= e($t['username']) ?> • <?= (int)$t['replies'] ?> replies • <?= e($t['created_at']) ?></div>
+      </a>
+    <?php endforeach; ?>
+    <?php if (!$threads): ?>
+      <div class="muted">No threads yet.</div>
+    <?php endif; ?>
+  </div>
+</div>

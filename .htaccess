@@ -1,0 +1,28 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Static routes first
+    RewriteRule ^rules/?$ rules.html [L]
+
+    # Forum app: send to index.php with path (so REQUEST_URI or _url works)
+    RewriteRule ^forum/?$ index.php?_url=/forum [L,QSA]
+    RewriteRule ^login/?$ index.php?_url=/login [L,QSA]
+    RewriteRule ^register/?$ index.php?_url=/register [L,QSA]
+    RewriteRule ^logout/?$ index.php?_url=/logout [L,QSA]
+    RewriteRule ^admin/?$ index.php?_url=/admin [L,QSA]
+    RewriteRule ^admin/categories/?$ index.php?_url=/admin/categories [L,QSA]
+    RewriteRule ^admin/users/?$ index.php?_url=/admin/users [L,QSA]
+
+    # Don't rewrite existing files or directories
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Everything else to index.php with path
+    RewriteRule ^(.*)$ index.php?_url=/$1 [QSA,L]
+</IfModule>
+
+# Prefer index.php over index.html for /
+<IfModule mod_dir.c>
+    DirectoryIndex index.html index.php
+</IfModule>
