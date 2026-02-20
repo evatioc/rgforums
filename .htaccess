@@ -7,6 +7,8 @@
 
     # Forum app: send to index.php with path (so REQUEST_URI or _url works)
     RewriteRule ^forum/?$ index.php?_url=/forum [L,QSA]
+    RewriteRule ^team/?$ index.php?_url=/team [L,QSA]
+    RewriteRule ^faq/?$ index.php?_url=/faq [L,QSA]
     RewriteRule ^login/?$ index.php?_url=/login [L,QSA]
     RewriteRule ^register/?$ index.php?_url=/register [L,QSA]
     RewriteRule ^logout/?$ index.php?_url=/logout [L,QSA]
@@ -24,5 +26,5 @@
 
 # Prefer index.php over index.html for /
 <IfModule mod_dir.c>
-    DirectoryIndex index.html index.php
+    DirectoryIndex index.php
 </IfModule>

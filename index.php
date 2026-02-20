@@ -17,6 +17,7 @@ require APP . '/core/View.php';
 require APP . '/core/Router.php';
 require APP . '/controllers/AuthController.php';
 require APP . '/controllers/ForumController.php';
+require APP . '/controllers/PageController.php';
 require APP . '/controllers/AdminController.php';
 
 $cfg = require APP . '/config.php';
@@ -37,8 +38,13 @@ $router->get('/register', [AuthController::class, 'showRegister']);
 $router->post('/register', [AuthController::class, 'register']);
 $router->get('/logout', [AuthController::class, 'logout']);
 
-// Forum (forum home at /forum since / serves index.html)
-$router->get('/', [ForumController::class, 'home']);
+// Pages
+$router->get('/', [PageController::class, 'landing']);
+$router->get('/team', [PageController::class, 'team']);
+$router->get('/faq', [PageController::class, 'faq']);
+
+// Forum
+$router->get('/forum', [ForumController::class, 'home']);
 $router->get('/forum', [ForumController::class, 'home']);
 $router->get('/c/:slug', [ForumController::class, 'category']);
 $router->get('/c/:slug/new', [ForumController::class, 'showNewThread']);

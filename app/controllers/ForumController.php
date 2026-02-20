@@ -4,17 +4,48 @@ class ForumController {
     $pdo = DB::pdo();
     $cats = $pdo->query("SELECT * FROM categories ORDER BY sort_order ASC, id ASC")->fetchAll();
 
-    // Latest threads preview
-    $threads = $pdo->query("
-      SELECT t.*, c.name AS category_name, c.slug AS category_slug, u.username
+    // Enrich categories with stats
+    foreach ($cats as &$c) {
+      $stmt = $pdo->prepare("SELECT COUNT(*) FROM threads WHERE category_id = ?");
+      $stmt->execute([$c['id']]);
+      $c['thread_count'] = $stmt->fetchColumn();
+
+      $stmt = $pdo->prepare("
+        SELECT COUNT(*) FROM posts p 
+        JOIN threads t ON t.id = p.thread_id 
+        WHERE t.category_id = ?
+      ");
+      $stmt->execute([$c['id']]);
+      $c['post_count'] = $stmt->fetchColumn();
+
+      // Last post
+      $stmt = $pdo->prepare("
+        SELECT p.created_at, u.username, t.title, t.id as thread_id
+        FROM posts p
+        JOIN threads t ON t.id = p.thread_id
+        JOIN users u ON u.id = p.user_id
+        WHERE t.category_id = ?
+        ORDER BY p.created_at DESC
+        LIMIT 1
+      ");
+      $stmt->execute([$c['id']]);
+      $c['last_post'] = $stmt->fetch();
+    }
+    unset($c);
+
+    // Latest posts for Sidebar
+    // We'll fetch latest threads for now as it's cleaner
+    $sidebar = $pdo->query("
+      SELECT t.*, c.name AS category_name, c.slug AS category_slug, u.username,
+             (SELECT COUNT(*) FROM posts p WHERE p.thread_id = t.id) - 1 as replies
       FROM threads t
       JOIN categories c ON c.id = t.category_id
       JOIN users u ON u.id = t.user_id
-      ORDER BY t.created_at DESC
-      LIMIT 10
+      ORDER BY t.updated_at DESC
+      LIMIT 5
     ")->fetchAll();
 
-    View::render('home', ['categories'=>$cats, 'threads'=>$threads]);
+    View::render('home', ['categories'=>$cats, 'sidebar_threads'=>$sidebar, 'title' => 'Forums | Refined Roleplay']);
   }
 
   public static function category(string $slug): void {

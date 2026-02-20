@@ -8,7 +8,7 @@ return [
     'charset' => 'utf8mb4',
   ],
   'app' => [
-    'base_url' => '/forum', // usually blank on Hostinger root domain
+    'base_url' => '', // Set to empty string for root domain
     'site_name' => 'Refined Roleplay',
   ],
 ];
